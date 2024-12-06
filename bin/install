@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+version="$1"
+install_dir="$2"
+
+# Ensure go is available
+if ! command -v go > /dev/null; then
+  echo "Go is required to build protoc-gen-go-temporal."
+  exit 1
+fi
+
+# Create install_dir if it doesn't exist
+mkdir -p "$install_dir"
+
+# Set GOBIN to the installation directory so `go install` drops the binary there
+export GOBIN="$install_dir"
+
+# Install the specified version
+go install "github.com/cludden/protoc-gen-go-temporal@$version"
+
+# The binary should now be at $install_dir/protoc-gen-go-temporal
+chmod +x "$install_dir/protoc-gen-go-temporal"

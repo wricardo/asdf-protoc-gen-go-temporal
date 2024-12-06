@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Fetch tags from GitHub, filter and sort them
+curl -s https://api.github.com/repos/cludden/protoc-gen-go-temporal/tags \
+  | grep '"name":' \
+  | sed -E 's/.*"([^"]+)".*/\1/' \
+  | sort -Vr
