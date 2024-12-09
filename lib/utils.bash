@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -exuo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for protoc-gen-go-temporal.
-GH_REPO="https://github.com/wricardo/protoc-gen-go-temporal"
+GH_REPO="https://github.com/cludden/protoc-gen-go-temporal"
 TOOL_NAME="protoc-gen-go-temporal"
 TOOL_TEST="protoc-gen-go-temporal --version"
 
@@ -31,9 +31,11 @@ list_github_tags() {
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if protoc-gen-go-temporal has other means of determining installable versions.
-	list_github_tags
+	# # Fetch tags from GitHub, filter and sort them
+	curl -s https://api.github.com/repos/cludden/protoc-gen-go-temporal/tags \
+	  | grep '"name":' \
+	  | sed -E 's/.*"([^"]+)".*/\1/' \
+	  | sort -Vr | sed 's/^v//'
 }
 
 download_release() {
@@ -68,7 +70,7 @@ install_version() {
 
 		echo "$TOOL_NAME $version installation was successful!"
 	) || (
-		rm -rf "$install_path"
+		# rm -rf "$install_path"
 		fail "An error occurred while installing $TOOL_NAME $version."
 	)
 }
